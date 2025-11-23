@@ -1,4 +1,4 @@
-Celestara Space Travel
+✨🪐✨Celestara Space Travel
 
 A futuristic space tourism platform offering journeys to Planet Luminara - created for Fluxxion's Weekend Build Marathon.
 
