@@ -2,7 +2,7 @@
 
 A futuristic space tourism platform offering journeys to Planet Luminara - created for Fluxxion's Weekend Build Marathon.
 
-Live Demo: 
+Live Demo: https://complex-amaranth-hli6dabqda.edgeone.app/
 
 📋 Overview
 Celestara Space Travel is an interstellar tourism website featuring Planet Luminara - an imaginary bioluminescent world with floating islands, glowing forests, and crystal energy mines. The project showcases modern web development with immersive animations and interactive features.
