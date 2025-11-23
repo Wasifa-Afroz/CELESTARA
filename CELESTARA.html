@@ -1,0 +1,2110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Celestara Space Travel | Journey to Planet Luminara</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #000;
+            --bg-secondary: #1a0033;
+            --accent-1: #8a2be2;
+            --accent-2: #00ffff;
+            --accent-3: #ff6ec7;
+            --text-primary: #fff;
+            --text-secondary: #b19cd9;
+        }
+
+        body.light-mode {
+            --bg-primary: #f0f4ff;
+            --bg-secondary: #e6e9ff;
+            --accent-1: #5c16c5;
+            --accent-2: #0099cc;
+            --accent-3: #d63384;
+            --text-primary: #1a1a2e;
+            --text-secondary: #4a4a6a;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            transition: background 0.5s, color 0.5s;
+        }
+
+        /* Cursor Trail Effect */
+        .cursor-trail {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--accent-2), transparent);
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.6;
+            transition: transform 0.1s;
+        }
+
+        /* Animated Stars */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        body.light-mode .star {
+            background: var(--accent-1);
+            opacity: 0.2;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* Shooting Stars */
+        .shooting-star {
+            position: fixed;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 10px 2px white;
+            animation: shoot 3s linear infinite;
+            opacity: 0;
+        }
+
+        @keyframes shoot {
+            0% { 
+                opacity: 1;
+                transform: translateX(0) translateY(0);
+            }
+            100% { 
+                opacity: 0;
+                transform: translateX(-500px) translateY(500px);
+            }
+        }
+
+        /* Header with Glassmorphism */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 5%;
+            background: rgba(0, 0, 0, 0.3);
+            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(138, 43, 226, 0.3);
+            transition: all 0.3s;
+        }
+
+        body.light-mode header {
+            background: rgba(255, 255, 255, 0.3);
+            border-bottom: 1px solid rgba(92, 22, 197, 0.3);
+        }
+
+        header.scrolled {
+            padding: 15px 5%;
+            background: rgba(0, 0, 0, 0.9);
+        }
+
+        body.light-mode header.scrolled {
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            background: linear-gradient(45deg, var(--accent-1), var(--accent-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .logo:hover {
+            transform: scale(1.1) rotate(-5deg);
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        nav a {
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: all 0.3s;
+            font-weight: 500;
+            position: relative;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-2);
+            transition: width 0.3s;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        /* Dark Mode Toggle */
+        .theme-toggle {
+            cursor: pointer;
+            font-size: 24px;
+            background: rgba(138, 43, 226, 0.2);
+            border: 1px solid var(--accent-1);
+            border-radius: 50px;
+            padding: 8px 15px;
+            transition: all 0.3s;
+        }
+
+        .theme-toggle:hover {
+            background: var(--accent-1);
+            transform: rotate(180deg);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: var(--text-primary);
+            z-index: 1001;
+        }
+        
+        .mobile-nav-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            z-index: 998;
+            display: none;
+        }
+
+        .mobile-nav {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 300px;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.95);
+            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px);
+            padding: 80px 30px;
+            transition: right 0.3s;
+            z-index: 999;
+            display: none;
+        }
+
+        body.light-mode .mobile-nav {
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .mobile-nav.active {
+            right: 0;
+        }
+
+        .mobile-nav-backdrop.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-nav-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 32px;
+            cursor: pointer;
+            color: var(--text-primary);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(138, 43, 226, 0.2);
+            transition: all 0.3s;
+        }
+
+        .mobile-nav-close:hover {
+            background: var(--accent-1);
+            transform: rotate(90deg);
+        }
+
+        .mobile-nav a {
+            display: block;
+            color: var(--text-primary);
+            text-decoration: none;
+            padding: 20px 0;
+            font-size: 20px;
+            border-bottom: 1px solid rgba(138, 43, 226, 0.3);
+            transition: all 0.3s;
+        }
+
+        .mobile-nav a:hover {
+            color: var(--accent-2);
+            padding-left: 20px;
+        }
+
+        /* Parallax Hero */
+        .hero {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: radial-gradient(ellipse at center, var(--bg-secondary) 0%, var(--bg-primary) 70%);
+            overflow: hidden;
+        }
+
+        /* 3D Rotating Planet */
+        .planet-visual {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, var(--accent-3), var(--accent-1) 40%, #240046);
+            box-shadow: 0 0 150px var(--accent-1), inset -30px -30px 100px rgba(0, 0, 0, 0.5);
+            animation: rotate3d 20s linear infinite, float 6s ease-in-out infinite;
+            opacity: 0.4;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        body.light-mode .planet-visual {
+            opacity: 0.3;
+            box-shadow: 0 0 100px var(--accent-1), inset -30px -30px 80px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes rotate3d {
+            0% { transform: translate(-50%, -50%) rotateY(0deg); }
+            100% { transform: translate(-50%, -50%) rotateY(360deg); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(-50%, -50%) translateY(0px) rotateY(0deg); }
+            50% { transform: translate(-50%, -50%) translateY(-30px) rotateY(180deg); }
+        }
+
+        /* Planet Rings */
+        .planet-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            border: 3px solid var(--accent-2);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: ringRotate 15s linear infinite;
+        }
+
+        .ring-1 {
+            width: 600px;
+            height: 150px;
+            transform: translate(-50%, -50%) rotateX(75deg);
+        }
+
+        .ring-2 {
+            width: 700px;
+            height: 180px;
+            transform: translate(-50%, -50%) rotateX(75deg);
+            animation-delay: -5s;
+        }
+
+        @keyframes ringRotate {
+            0% { transform: translate(-50%, -50%) rotateX(75deg) rotateZ(0deg); }
+            100% { transform: translate(-50%, -50%) rotateX(75deg) rotateZ(360deg); }
+        }
+
+        /* Floating Particles */
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--accent-2);
+            border-radius: 50%;
+            animation: particleFloat 8s infinite;
+            opacity: 0.5;
+        }
+
+        @keyframes particleFloat {
+            0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { transform: translateY(-100vh) translateX(50px); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            max-width: 900px;
+            padding: 0 20px;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero h1 {
+            font-size: 72px;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, var(--accent-3), var(--accent-2), var(--accent-1));
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease infinite;
+            text-shadow: 0 0 30px rgba(138, 43, 226, 0.5);
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .hero p {
+            font-size: 26px;
+            margin-bottom: 40px;
+            color: var(--text-secondary);
+            animation: fadeInUp 1s ease-out 0.3s backwards;
+        }
+
+        .hero .tagline {
+            font-size: 18px;
+            color: var(--accent-2);
+            margin-bottom: 30px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            animation: fadeInUp 1s ease-out 0.2s backwards;
+        }
+
+        /* CTA Button with Hologram Effect */
+        .cta-button {
+            display: inline-block;
+            padding: 20px 60px;
+            background: linear-gradient(45deg, var(--accent-1), var(--accent-2));
+            color: #000;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 18px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 40px rgba(138, 43, 226, 0.6);
+            animation: fadeInUp 1s ease-out 0.5s backwards, buttonPulse 2s infinite;
+            transition: all 0.3s;
+        }
+
+        @keyframes buttonPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 40px rgba(138, 43, 226, 0.6); }
+            50% { transform: scale(1.05); box-shadow: 0 0 60px rgba(138, 43, 226, 0.8); }
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .cta-button:hover {
+            transform: scale(1.1) translateY(-5px);
+            box-shadow: 0 10px 50px rgba(138, 43, 226, 0.8);
+        }
+
+        /* Scroll Indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+        }
+
+        .scroll-indicator::before {
+            content: '↓';
+            font-size: 32px;
+            color: var(--accent-2);
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-20px); }
+        }
+
+        /* Section Styles */
+        section {
+            position: relative;
+            padding: 120px 5%;
+            z-index: 10;
+        }
+
+        .section-title {
+            font-size: 56px;
+            text-align: center;
+            margin-bottom: 80px;
+            background: linear-gradient(45deg, var(--accent-3), var(--accent-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--accent-2), transparent);
+        }
+
+        /* Planet Introduction with Reveal Animation */
+        .planet-intro {
+            background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 50%, var(--bg-primary) 100%);
+        }
+
+        .planet-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: rgba(138, 43, 226, 0.1);
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            border-radius: 25px;
+            padding: 50px 30px;
+            text-align: center;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(50px);
+            animation: revealCard 0.6s ease-out forwards;
+        }
+
+        .feature-card:nth-child(1) { animation-delay: 0.1s; }
+        .feature-card:nth-child(2) { animation-delay: 0.2s; }
+        .feature-card:nth-child(3) { animation-delay: 0.3s; }
+        .feature-card:nth-child(4) { animation-delay: 0.4s; }
+        .feature-card:nth-child(5) { animation-delay: 0.5s; }
+        .feature-card:nth-child(6) { animation-delay: 0.6s; }
+
+        @keyframes revealCard {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        body.light-mode .feature-card {
+            background: rgba(92, 22, 197, 0.05);
+            border: 1px solid rgba(92, 22, 197, 0.2);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .feature-card:hover::before {
+            left: 100%;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-15px) scale(1.05);
+            box-shadow: 0 20px 60px rgba(138, 43, 226, 0.5);
+            border-color: var(--accent-1);
+        }
+
+        .feature-icon {
+            font-size: 64px;
+            margin-bottom: 25px;
+            display: inline-block;
+            animation: iconFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes iconFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
+        }
+
+        .feature-card h3 {
+            color: var(--accent-2);
+            margin-bottom: 20px;
+            font-size: 26px;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover h3 {
+            color: var(--accent-3);
+            transform: scale(1.1);
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        /* Stats Counter Section */
+        .stats-section {
+            background: var(--bg-primary);
+            padding: 80px 5%;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 50px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 30px;
+            background: rgba(138, 43, 226, 0.1);
+            border-radius: 20px;
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            transition: all 0.3s;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 40px rgba(138, 43, 226, 0.3);
+        }
+
+        .stat-number {
+            font-size: 48px;
+            font-weight: bold;
+            color: var(--accent-2);
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 18px;
+        }
+
+        /* Gallery Section with Hover Effects */
+        .gallery-section {
+            background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .gallery-item {
+            aspect-ratio: 16/9;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            border: 2px solid rgba(138, 43, 226, 0.3);
+            transition: all 0.5s;
+        }
+
+        .gallery-item::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2), var(--accent-3));
+            opacity: 0.6;
+            transition: opacity 0.3s;
+        }
+
+        .gallery-item:hover::before {
+            opacity: 0.9;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.05) rotate(2deg);
+            box-shadow: 0 20px 60px rgba(138, 43, 226, 0.6);
+        }
+
+        .gallery-content {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.8);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .gallery-item:hover .gallery-content {
+            opacity: 1;
+        }
+
+        /* Packages with 3D Tilt Effect */
+        .packages {
+            background: var(--bg-primary);
+        }
+
+        .package-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 50px;
+            max-width: 1400px;
+            margin: 0 auto;
+            perspective: 1000px;
+        }
+
+        .package-card {
+            background: linear-gradient(135deg, rgba(138, 43, 226, 0.2), rgba(0, 255, 255, 0.1));
+            border: 2px solid transparent;
+            border-radius: 30px;
+            padding: 60px 40px;
+            text-align: center;
+            transition: all 0.5s;
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+
+        body.light-mode .package-card {
+            background: linear-gradient(135deg, rgba(92, 22, 197, 0.1), rgba(0, 153, 204, 0.05));
+        }
+
+        .package-card::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            background: linear-gradient(45deg, var(--accent-1), var(--accent-2), var(--accent-3));
+            border-radius: 30px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .package-card:hover::before {
+            opacity: 1;
+        }
+
+        .package-card:hover {
+            transform: translateY(-20px) rotateX(5deg);
+            box-shadow: 0 30px 80px rgba(138, 43, 226, 0.5);
+        }
+
+        .package-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--accent-3);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            animation: badgePulse 2s infinite;
+        }
+
+        @keyframes badgePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .package-name {
+            font-size: 36px;
+            color: var(--accent-3);
+            margin-bottom: 25px;
+            font-weight: bold;
+        }
+
+        .package-price {
+            font-size: 56px;
+            color: var(--accent-2);
+            margin-bottom: 35px;
+            font-weight: bold;
+        }
+
+        .package-features {
+            list-style: none;
+            margin-bottom: 40px;
+            text-align: left;
+        }
+
+        .package-features li {
+            margin: 18px 0;
+            color: var(--text-secondary);
+            padding-left: 30px;
+            position: relative;
+            font-size: 16px;
+        }
+
+        .package-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--accent-2);
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        /* Interactive Timeline */
+        .journey-timeline {
+            background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+        }
+
+        .timeline {
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg, var(--accent-1), var(--accent-2), var(--accent-3));
+            box-shadow: 0 0 20px var(--accent-2);
+        }
+
+        .timeline-item {
+            margin-bottom: 80px;
+            position: relative;
+            width: 50%;
+            padding: 0 50px;
+            opacity: 0;
+            animation: timelineSlide 0.6s ease-out forwards;
+        }
+
+        .timeline-item:nth-child(1) { animation-delay: 0.2s; }
+        .timeline-item:nth-child(2) { animation-delay: 0.4s; }
+        .timeline-item:nth-child(3) { animation-delay: 0.6s; }
+        .timeline-item:nth-child(4) { animation-delay: 0.8s; }
+        .timeline-item:nth-child(5) { animation-delay: 1s; }
+        .timeline-item:nth-child(6) { animation-delay: 1.2s; }
+
+        @keyframes timelineSlide {
+            from { opacity: 0; transform: translateX(-50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .timeline-item:nth-child(odd) {
+            left: 0;
+            text-align: right;
+        }
+
+        .timeline-item:nth-child(even) {
+            left: 50%;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background: var(--accent-2);
+            border-radius: 50%;
+            top: 0;
+            box-shadow: 0 0 30px var(--accent-2);
+            animation: dotPulse 2s ease-in-out infinite;
+            border: 4px solid var(--bg-primary);
+        }
+
+        @keyframes dotPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 30px var(--accent-2); }
+            50% { transform: scale(1.3); box-shadow: 0 0 50px var(--accent-2); }
+        }
+
+        .timeline-item:nth-child(odd) .timeline-dot {
+            right: -12px;
+        }
+
+        .timeline-item:nth-child(even) .timeline-dot {
+            left: -12px;
+        }
+
+        .timeline-content {
+            background: rgba(138, 43, 226, 0.1);
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+
+        body.light-mode .timeline-content {
+            background: rgba(92, 22, 197, 0.05);
+            border: 1px solid rgba(92, 22, 197, 0.2);
+        }
+
+        .timeline-content:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 40px rgba(138, 43, 226, 0.3);
+        }
+
+        .timeline-content h3 {
+            color: var(--accent-3);
+            margin-bottom: 15px;
+            font-size: 26px;
+        }
+
+        .timeline-content p {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        /* Testimonials Section */
+        .testimonials {
+            background: var(--bg-primary);
+            padding: 100px 5%;
+        }
+
+        .testimonial-slider {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .testimonial-card {
+            background: rgba(138, 43, 226, 0.1);
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            border-radius: 25px;
+            padding: 50px;
+            text-align: center;
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            animation: fadeInUp 0.8s ease-out;
+            transition: all 0.3s;
+        }
+
+        .testimonial-text {
+            font-size: 20px;
+            font-style: italic;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+
+        .testimonial-author {
+            font-size: 18px;
+            color: var(--accent-2);
+            font-weight: bold;
+        }
+
+        .testimonial-stars {
+            color: #ffd700;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        /* Interactive Booking Form */
+        .booking {
+            background: radial-gradient(ellipse at center, var(--bg-secondary) 0%, var(--bg-primary) 70%);
+            text-align: center;
+        }
+
+        .booking-form {
+            max-width: 700px;
+            margin: 0 auto;
+            background: rgba(138, 43, 226, 0.1);
+            border: 2px solid rgba(138, 43, 226, 0.3);
+            border-radius: 30px;
+            padding: 60px 50px;
+            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 80px rgba(138, 43, 226, 0.3);
+            animation: fadeInUp 0.8s ease-out;
+            position: relative;
+        }
+
+        body.light-mode .booking-form {
+            background: rgba(92, 22, 197, 0.05);
+            border: 2px solid rgba(92, 22, 197, 0.2);
+        }
+
+        .form-group {
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 12px;
+            color: var(--accent-2);
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 18px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(138, 43, 226, 0.5);
+            border-radius: 15px;
+            color: var(--text-primary);
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        body.light-mode .form-group input,
+        body.light-mode .form-group select {
+            background: rgba(255, 255, 255, 0.5);
+            border: 2px solid rgba(92, 22, 197, 0.3);
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--accent-2);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .form-submit {
+            background: linear-gradient(45deg, var(--accent-1), var(--accent-2));
+            color: #000;
+            border: none;
+            padding: 20px 60px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 40px rgba(138, 43, 226, 0.5);
+            margin-top: 20px;
+        }
+
+        .form-submit:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 60px rgba(138, 43, 226, 0.7);
+        }
+
+        .form-submit:active {
+            transform: translateY(-2px) scale(1.02);
+        }
+
+        /* Footer with Wave Animation */
+        footer {
+            background: var(--bg-primary);
+            padding: 60px 5%;
+            text-align: center;
+            border-top: 1px solid rgba(138, 43, 226, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer-wave {
+            position: absolute;
+            top: -100px;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background: linear-gradient(90deg, var(--accent-1), var(--accent-2), var(--accent-3));
+            opacity: 0.1;
+            animation: wave 10s linear infinite;
+        }
+
+        @keyframes wave {
+            0% { transform: translateX(0) scaleY(1); }
+            50% { transform: translateX(-25%) scaleY(1.5); }
+            100% { transform: translateX(-50%) scaleY(1); }
+        }
+
+        footer p {
+            color: var(--text-secondary);
+            margin: 15px 0;
+            font-size: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .social-links {
+            margin: 30px 0;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .social-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(138, 43, 226, 0.2);
+            border: 1px solid var(--accent-1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .social-icon:hover {
+            background: var(--accent-1);
+            transform: translateY(-5px) rotate(360deg);
+            box-shadow: 0 10px 30px rgba(138, 43, 226, 0.5);
+        }
+
+        /* Back to Top Button */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, var(--accent-1), var(--accent-2));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 999;
+            box-shadow: 0 5px 25px rgba(138, 43, 226, 0.5);
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-10px) scale(1.1);
+            box-shadow: 0 10px 40px rgba(138, 43, 226, 0.7);
+        }
+
+        .back-to-top::before {
+            content: '↑';
+            font-size: 28px;
+            font-weight: bold;
+            color: #000;
+        }
+
+        /* Loading Animation */
+        .loading-screen {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s, visibility 0.5s;
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loading-spinner {
+            width: 100px;
+            height: 100px;
+            border: 4px solid rgba(138, 43, 226, 0.2);
+            border-top: 4px solid var(--accent-2);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 42px;
+            }
+
+            .hero p {
+                font-size: 18px;
+            }
+
+            .section-title {
+                font-size: 36px;
+            }
+
+            .planet-visual {
+                width: 300px;
+                height: 300px;
+            }
+
+            .ring-1, .ring-2 {
+                display: none;
+            }
+
+            .timeline::before {
+                left: 30px;
+            }
+
+            .timeline-item {
+                width: 100%;
+                left: 0 !important;
+                padding-left: 80px;
+                text-align: left !important;
+            }
+
+            .timeline-item .timeline-dot {
+                left: 18px !important;
+            }
+
+            nav {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .mobile-nav-backdrop {
+                display: block;
+            }
+
+            .mobile-nav {
+                display: block;
+            }
+
+            .package-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-button {
+                padding: 15px 40px;
+                font-size: 16px;
+            }
+
+            .theme-toggle {
+                margin-right: 15px;
+            }
+        }
+
+        /* Accessibility */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--accent-1), var(--accent-2));
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, var(--accent-2), var(--accent-3));
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Cursor Trail -->
+    <div class="cursor-trail" id="cursorTrail"></div>
+
+    <!-- Animated Stars -->
+    <div class="stars" id="stars"></div>
+
+    <!-- Header -->
+    <header id="header">
+        <div class="logo">✦ CELESTARA</div>
+        <nav>
+            <a href="#home">Home</a>
+            <a href="#planet">Planet</a>
+            <a href="#packages">Packages</a>
+            <a href="#journey">Journey</a>
+            <a href="#testimonials">Reviews</a>
+            <a href="#book">Book Now</a>
+        </nav>
+        <div class="theme-toggle" id="themeToggle" title="Toggle Dark/Light Mode">🌙</div>
+        <div class="mobile-menu-btn" id="mobileMenuBtn">☰</div>
+    </header>
+
+    <!-- Mobile Navigation Backdrop -->
+    <div class="mobile-nav-backdrop" id="mobileNavBackdrop"></div>
+    
+    <!-- Mobile Navigation -->
+    <div class="mobile-nav" id="mobileNav">
+        <div class="mobile-nav-close" id="mobileNavClose">✕</div>
+        <a href="#home">Home</a>
+        <a href="#planet">Planet</a>
+        <a href="#packages">Packages</a>
+        <a href="#journey">Journey</a>
+        <a href="#testimonials">Reviews</a>
+        <a href="#book">Book Now</a>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="planet-visual"></div>
+        <div class="planet-ring ring-1"></div>
+        <div class="planet-ring ring-2"></div>
+        <div class="hero-content">
+            <div class="tagline">The Future of Space Tourism</div>
+            <h1>Journey to Luminara</h1>
+            <p>Experience the bioluminescent wonder of the galaxy's most enchanting planet</p>
+            <a href="#book" class="cta-button">Begin Your Journey</a>
+        </div>
+        <div class="scroll-indicator"></div>
+    </section>
+
+    <!-- Planet Introduction -->
+    <section class="planet-intro" id="planet">
+        <h2 class="section-title">Discover Planet Luminara</h2>
+        <div class="planet-features">
+            <div class="feature-card">
+                <div class="feature-icon">🌟</div>
+                <h3>Bioluminescent Forests</h3>
+                <p>Walk through forests where every tree, plant, and creature glows with natural light, creating an ethereal landscape that shifts colors with the planet's three moons.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💎</div>
+                <h3>Crystalium Mines</h3>
+                <p>Explore ancient mines filled with Crystalium, a rare energy-storing crystal that powers our interstellar vessels and holds healing properties.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🌊</div>
+                <h3>Floating Islands</h3>
+                <p>Marvel at massive islands suspended by magnetic fields, connected by bridges of light. Each island hosts unique ecosystems and breathtaking waterfalls.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎭</div>
+                <h3>Luminae Culture</h3>
+                <p>Meet the Luminae people, a peaceful civilization that communicates through light patterns and has mastered harmony with their planet's natural energy.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">❄️</div>
+                <h3>Twin Climate Zones</h3>
+                <p>Experience both tropical warmth and aurora-filled polar regions within hours, thanks to Luminara's unique orbital rotation and atmospheric composition.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔮</div>
+                <h3>Aurora Ocean</h3>
+                <p>Swim in waters that glow with perpetual auroras, created by the planet's magnetic core interacting with its three moons and mineral-rich seas.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="stats-section">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <div class="stat-number" data-target="15000">0</div>
+                <div class="stat-label">Happy Travelers</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" data-target="500">0</div>
+                <div class="stat-label">Successful Missions</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" data-target="99">0</div>
+                <div class="stat-label">Safety Rating %</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" data-target="12">0</div>
+                <div class="stat-label">Years of Service</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section class="gallery-section">
+        <h2 class="section-title">Visual Journey</h2>
+        <div class="gallery-grid">
+            <div class="gallery-item">
+                <div class="gallery-content">🌲 Glowing Forest Paths</div>
+            </div>
+            <div class="gallery-item">
+                <div class="gallery-content">🏝️ Floating Paradise Islands</div>
+            </div>
+            <div class="gallery-item">
+                <div class="gallery-content">💫 Aurora Ocean Sunset</div>
+            </div>
+            <div class="gallery-item">
+                <div class="gallery-content">🏔️ Crystal Mountain Peaks</div>
+            </div>
+            <div class="gallery-item">
+                <div class="gallery-content">🌌 Triple Moon Rise</div>
+            </div>
+            <div class="gallery-item">
+                <div class="gallery-content">✨ Luminae Light Festival</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Packages Section -->
+    <section class="packages" id="packages">
+        <h2 class="section-title">Travel Packages</h2>
+        <div class="package-grid">
+            <div class="package-card">
+                <span class="package-badge">Popular</span>
+                <div class="package-name">Explorer</div>
+                <div class="package-price">$75,000</div>
+                <ul class="package-features">
+                    <li>7-day stay on Luminara</li>
+                    <li>Standard shuttle transport</li>
+                    <li>Forest & island tours</li>
+                    <li>Luminae cultural introduction</li>
+                    <li>Basic space suit included</li>
+                    <li>Group accommodation</li>
+                    <li>Crystalium sample souvenir</li>
+                </ul>
+                <a href="#book" class="cta-button">Book Explorer</a>
+            </div>
+            <div class="package-card">
+                <span class="package-badge">Best Value</span>
+                <div class="package-name">Adventurer</div>
+                <div class="package-price">$150,000</div>
+                <ul class="package-features">
+                    <li>14-day premium experience</li>
+                    <li>Private luxury transport</li>
+                    <li>Crystalium mine expedition</li>
+                    <li>Aurora Ocean diving</li>
+                    <li>Advanced exploration gear</li>
+                    <li>Private floating villa</li>
+                    <li>Cultural immersion program</li>
+                    <li>Professional photography package</li>
+                </ul>
+                <a href="#book" class="cta-button">Book Adventurer</a>
+            </div>
+            <div class="package-card">
+                <span class="package-badge">VIP</span>
+                <div class="package-name">Luminary</div>
+                <div class="package-price">$350,000</div>
+                <ul class="package-features">
+                    <li>30-day VIP experience</li>
+                    <li>Personal spacecraft & pilot</li>
+                    <li>Exclusive polar aurora expedition</li>
+                    <li>Crystalium crystal keepsake</li>
+                    <li>Light pattern communication training</li>
+                    <li>Luxury sky mansion</li>
+                    <li>All-access planetary pass</li>
+                    <li>Return trip flexibility</li>
+                    <li>Lifetime Celestara membership</li>
+                </ul>
+                <a href="#book" class="cta-button">Book Luminary</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Journey Timeline -->
+    <section class="journey-timeline" id="journey">
+        <h2 class="section-title">Your Journey Timeline</h2>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <h3>Pre-Launch (Week 1)</h3>
+                    <p>Complete medical screening, zero-gravity training, and Luminae cultural orientation at our Earth facility. Receive your personalized space travel kit and meet your crew.</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <h3>Launch Day (Day 0)</h3>
+                    <p>Board the Celestara Voyager from our orbital station. Enjoy panoramic views of Earth before entering hyperdrive for the 72-hour journey through deep space.</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <h3>Transit (Days 1-3)</h3>
+                    <p>Experience zero-gravity recreation, gourmet space cuisine, and educational programs about Luminara. Our crew ensures your comfort throughout the journey.</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <h3>Arrival (Day 4)</h3>
+                    <p>Witness Luminara's triple moons as you descend through its bioluminescent atmosphere. Land at Starfall Port and meet your Luminae guide for orientation.</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <h3>Exploration (Days 5+)</h3>
+                    <p>Begin your chosen adventure package. Each day brings new wonders from glowing forests to crystal caverns, with activities tailored to your interests and fitness level.</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <h3>Return Journey</h3>
+                    <p>Depart with memories, photos, and your Crystalium keepsake. Arrive back at Earth's orbital station where transport to any global location awaits.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials" id="testimonials">
+        <h2 class="section-title">Traveler Experiences</h2>
+        <div class="testimonial-slider">
+            <div class="testimonial-card">
+                <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+                <p class="testimonial-text">"Luminara exceeded every expectation! The bioluminescent forests are absolutely magical. Swimming in the Aurora Ocean was a life-changing experience. The Luminae people were so welcoming and their light communication is mesmerizing!"</p>
+                <p class="testimonial-author">— Dr. Sarah Chen, Astrophysicist</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking Form -->
+    <section class="booking" id="book">
+        <h2 class="section-title">Reserve Your Voyage</h2>
+        <div class="booking-form">
+            <form id="bookingForm">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" required placeholder="Enter your full name">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" required placeholder="your.email@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="package">Select Package</label>
+                    <select id="package" name="package" required>
+                        <option value="">Choose your adventure</option>
+                        <option value="explorer">Explorer - $75,000</option>
+                        <option value="adventurer">Adventurer - $150,000</option>
+                        <option value="luminary">Luminary - $350,000</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="date">Preferred Launch Date</label>
+                    <input type="date" id="date" name="date" required>
+                </div>
+                <div class="form-group">
+                    <label for="travelers">Number of Travelers</label>
+                    <input type="number" id="travelers" name="travelers" min="1" max="10" required placeholder="1">
+                </div>
+                <button type="submit" class="form-submit">Secure Your Journey</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-wave"></div>
+        <div class="social-links">
+            <div class="social-icon">🌐</div>
+            <div class="social-icon">📱</div>
+            <div class="social-icon">✉️</div>
+            <div class="social-icon">🚀</div>
+        </div>
+        <p>&copy; 2025 Celestara Space Travel. Journey responsibly across the cosmos.</p>
+        <p>Certified by Intergalactic Travel Authority | License #LST-2025-LUMINARA</p>
+        <p>Contact: travel@celestara.space | +1-800-LUMINARA</p>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <div class="back-to-top" id="backToTop"></div>
+
+    <script>
+        // Loading Screen
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loadingScreen').classList.add('hidden');
+            }, 1500);
+        });
+
+        // Generate Animated Stars
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < 300; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.width = Math.random() * 3 + 'px';
+            star.style.height = star.style.width;
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 3 + 's';
+            star.style.animationDuration = (2 + Math.random() * 2) + 's';
+            starsContainer.appendChild(star);
+        }
+
+        // Generate Shooting Stars
+        for (let i = 0; i < 5; i++) {
+            const shootingStar = document.createElement('div');
+            shootingStar.className = 'shooting-star';
+            shootingStar.style.left = Math.random() * 100 + '%';
+            shootingStar.style.top = Math.random() * 50 + '%';
+            shootingStar.style.animationDelay = Math.random() * 10 + 's';
+            starsContainer.appendChild(shootingStar);
+        }
+
+        // Generate Floating Particles
+        const hero = document.querySelector('.hero');
+        for (let i = 0; i < 30; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 8 + 's';
+            particle.style.animationDuration = (6 + Math.random() * 4) + 's';
+            hero.appendChild(particle);
+        }
+
+        // Cursor Trail Effect
+        const cursorTrail = document.getElementById('cursorTrail');
+        let mouseX = 0, mouseY = 0;
+        let trailX = 0, trailY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function animateTrail() {
+            trailX += (mouseX - trailX) * 0.1;
+            trailY += (mouseY - trailY) * 0.1;
+            cursorTrail.style.left = trailX + 'px';
+            cursorTrail.style.top = trailY + 'px';
+            requestAnimationFrame(animateTrail);
+        }
+        animateTrail();
+
+        // Dark/Light Mode Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('light-mode');
+            themeToggle.textContent = document.body.classList.contains('light-mode') ? '☀️' : '🌙';
+        });
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileNav = document.getElementById('mobileNav');
+        const mobileNavClose = document.getElementById('mobileNavClose');
+        const mobileNavBackdrop = document.getElementById('mobileNavBackdrop');
+        
+        function openMobileMenu() {
+            mobileNav.classList.add('active');
+            mobileNavBackdrop.classList.add('active');
+            mobileMenuBtn.textContent = '✕';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeMobileMenu() {
+            mobileNav.classList.remove('active');
+            mobileNavBackdrop.classList.remove('active');
+            mobileMenuBtn.textContent = '☰';
+            document.body.style.overflow = '';
+        }
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            if (mobileNav.classList.contains('active')) {
+                closeMobileMenu();
+            } else {
+                openMobileMenu();
+            }
+        });
+        
+        mobileNavClose.addEventListener('click', closeMobileMenu);
+        mobileNavBackdrop.addEventListener('click', closeMobileMenu);
+        
+        document.querySelectorAll('.mobile-nav a').forEach(link => {
+            link.addEventListener('click', closeMobileMenu);
+        });
+
+        // Smooth Scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Header Scroll Effect
+        const header = document.getElementById('header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Counter Animation for Stats
+        const statNumbers = document.querySelectorAll('.stat-number');
+        let animated = false;
+
+        function animateCounters() {
+            const statsSection = document.querySelector('.stats-section');
+            const sectionTop = statsSection.offsetTop;
+            const sectionHeight = statsSection.offsetHeight;
+            const scrollY = window.scrollY + window.innerHeight;
+
+            if (scrollY > sectionTop && scrollY < sectionTop + sectionHeight && !animated) {
+                animated = true;
+                statNumbers.forEach(stat => {
+                    const target = parseInt(stat.getAttribute('data-target'));
+                    const duration = 2000;
+                    const step = target / (duration / 16);
+                    let current = 0;
+
+                    const counter = setInterval(() => {
+                        current += step;
+                        if (current >= target) {
+                            stat.textContent = target + (stat.parentElement.querySelector('.stat-label').textContent.includes('%') ? '%' : '+');
+                            clearInterval(counter);
+                        } else {
+                            stat.textContent = Math.floor(current);
+                        }
+                    }, 16);
+                });
+            }
+        }
+
+        window.addEventListener('scroll', animateCounters);
+
+        // Back to Top Button
+        const backToTop = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 500) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Form Submission
+        document.getElementById('bookingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                package: document.getElementById('package').value,
+                date: document.getElementById('date').value,
+                travelers: document.getElementById('travelers').value
+            };
+
+            const successMsg = document.createElement('div');
+            successMsg.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: linear-gradient(45deg, var(--accent-1), var(--accent-2));
+                color: #000;
+                padding: 40px 60px;
+                border-radius: 20px;
+                font-size: 20px;
+                font-weight: bold;
+                z-index: 10000;
+                box-shadow: 0 20px 80px rgba(138, 43, 226, 0.8);
+                animation: fadeInUp 0.5s ease-out;
+                text-align: center;
+            `;
+            successMsg.innerHTML = `
+                <div style="font-size: 48px; margin-bottom: 20px;">🚀</div>
+                <div>Booking Request Received!</div>
+                <div style="font-size: 14px; margin-top: 15px; opacity: 0.8;">Our travel coordinators will contact you within 24 hours</div>
+            `;
+            
+            document.body.appendChild(successMsg);
+
+            setTimeout(() => {
+                successMsg.style.opacity = '0';
+                successMsg.style.transform = 'translate(-50%, -50%) scale(0.8)';
+                successMsg.style.transition = 'all 0.3s ease-out';
+                setTimeout(() => successMsg.remove(), 300);
+            }, 4000);
+
+            this.reset();
+            console.log('Booking Data:', formData);
+        });
+
+        // Parallax Effect on Scroll
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const parallaxElements = document.querySelectorAll('.planet-visual, .planet-ring');
+            
+            parallaxElements.forEach(el => {
+                const speed = 0.5;
+                el.style.transform = `translate(-50%, calc(-50% + ${scrolled * speed}px))`;
+            });
+        });
+
+        // Intersection Observer for Fade-in Animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Dynamic Date Picker
+        const dateInput = document.getElementById('date');
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.setAttribute('min', today);
+
+        // Package Price Display
+        const packageSelect = document.getElementById('package');
+        packageSelect.addEventListener('change', function() {
+            const selected = this.options[this.selectedIndex];
+            if (selected.value) {
+                const price = (selected.text.split('-')[1] || '').trim();
+                console.log(`Selected package price: ${price}`);
+            }
+        });
+
+        // Keyboard Navigation Enhancement
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && mobileNav.classList.contains('active')) {
+                closeMobileMenu();
+            }
+        });
+
+        // Random testimonial rotation
+        const testimonials = [
+            {
+                stars: 5,
+                text: "Luminara exceeded every expectation! The bioluminescent forests are absolutely magical. Swimming in the Aurora Ocean was a life-changing experience. The Luminae people were so welcoming and their light communication is mesmerizing!",
+                author: "Dr. Sarah Chen, Astrophysicist"
+            },
+            {
+                stars: 5,
+                text: "As a photographer, I've traveled the world, but nothing prepared me for Luminara's beauty. The triple moon rises are spectacular, and the Crystalium mines glow like nothing on Earth. Celestara's service was impeccable from start to finish!",
+                author: "Marcus Rodriguez, Travel Photographer"
+            },
+            {
+                stars: 5,
+                text: "The Adventurer package was worth every penny. Our Luminae guide taught us light communication, and we explored floating islands I never dreamed existed. The 14 days felt like a lifetime of wonder compressed into pure joy!",
+                author: "Aisha Patel, Marine Biologist"
+            }
+        ];
+
+        let currentTestimonial = 0;
+
+        function rotateTestimonial() {
+            currentTestimonial = (currentTestimonial + 1) % testimonials.length;
+            const testimonial = testimonials[currentTestimonial];
+            
+            const card = document.querySelector('.testimonial-card');
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                document.querySelector('.testimonial-stars').textContent = '⭐'.repeat(testimonial.stars);
+                document.querySelector('.testimonial-text').textContent = `"${testimonial.text}"`;
+                document.querySelector('.testimonial-author').textContent = `— ${testimonial.author}`;
+                
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 300);
+        }
+
+        setInterval(rotateTestimonial, 8000);
+
+        // Add manual testimonial navigation
+        const testimonialSection = document.querySelector('.testimonials');
+        const navButtons = document.createElement('div');
+        navButtons.style.cssText = `
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        `;
+        
+        const prevBtn = document.createElement('button');
+        prevBtn.textContent = '←';
+        prevBtn.style.cssText = `
+            background: var(--accent-1);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s;
+        `;
+        prevBtn.addEventListener('click', () => {
+            currentTestimonial = (currentTestimonial - 1 + testimonials.length) % testimonials.length;
+            rotateTestimonial();
+        });
+        
+        const nextBtn = document.createElement('button');
+        nextBtn.textContent = '→';
+        nextBtn.style.cssText = prevBtn.style.cssText;
+        nextBtn.addEventListener('click', rotateTestimonial);
+        
+        prevBtn.addEventListener('mouseenter', () => prevBtn.style.transform = 'scale(1.1)');
+        prevBtn.addEventListener('mouseleave', () => prevBtn.style.transform = 'scale(1)');
+        nextBtn.addEventListener('mouseenter', () => nextBtn.style.transform = 'scale(1.1)');
+        nextBtn.addEventListener('mouseleave', () => nextBtn.style.transform = 'scale(1)');
+        
+        navButtons.appendChild(prevBtn);
+        navButtons.appendChild(nextBtn);
+        document.querySelector('.testimonial-slider').appendChild(navButtons);
+
+        // Add 3D tilt effect to package cards
+        const packageCards = document.querySelectorAll('.package-card');
+        packageCards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                const rotateX = (y - centerY) / 20;
+                const rotateY = (centerX - x) / 20;
+                
+                card.style.transform = `translateY(-20px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0) rotateX(0) rotateY(0)';
+            });
+        });
+
+        // Add typing effect to hero tagline
+        const tagline = document.querySelector('.tagline');
+        const taglineText = tagline.textContent;
+        tagline.textContent = '';
+        let charIndex = 0;
+
+        function typeTagline() {
+            if (charIndex < taglineText.length) {
+                tagline.textContent += taglineText.charAt(charIndex);
+                charIndex++;
+                setTimeout(typeTagline, 100);
+            }
+        }
+
+        setTimeout(typeTagline, 1500);
+
+        // Add progress indicator for form
+        const formInputs = document.querySelectorAll('#bookingForm input, #bookingForm select');
+        const progressBar = document.createElement('div');
+        progressBar.style.cssText = `
+            height: 4px;
+            background: var(--accent-2);
+            width: 0%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            border-radius: 30px 30px 0 0;
+            transition: width 0.3s;
+        `;
+        document.querySelector('.booking-form').insertBefore(progressBar, document.querySelector('.booking-form').firstChild);
+
+        formInputs.forEach((input) => {
+            input.addEventListener('input', () => {
+                let filledInputs = 0;
+                formInputs.forEach(inp => {
+                    if (inp.value) filledInputs++;
+                });
+                const progress = (filledInputs / formInputs.length) * 100;
+                progressBar.style.width = progress + '%';
+            });
+        });
+
+        // Add galaxy background to hero
+        function createGalaxy() {
+            const galaxy = document.createElement('canvas');
+            galaxy.style.cssText = `
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                opacity: 0.3;
+                pointer-events: none;
+            `;
+            galaxy.width = window.innerWidth;
+            galaxy.height = window.innerHeight;
+            
+            const ctx = galaxy.getContext('2d');
+            const stars = [];
+            
+            for (let i = 0; i < 100; i++) {
+                stars.push({
+                    x: Math.random() * galaxy.width,
+                    y: Math.random() * galaxy.height,
+                    size: Math.random() * 2,
+                    speed: Math.random() * 0.5
+                });
+            }
+            
+            function animateGalaxy() {
+                ctx.clearRect(0, 0, galaxy.width, galaxy.height);
+                ctx.fillStyle = 'rgba(138, 43, 226, 0.5)';
+                
+                stars.forEach(star => {
+                    ctx.beginPath();
+                    ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    star.y += star.speed;
+                    if (star.y > galaxy.height) {
+                        star.y = 0;
+                        star.x = Math.random() * galaxy.width;
+                    }
+                });
+                
+                requestAnimationFrame(animateGalaxy);
+            }
+            
+            document.querySelector('.hero').appendChild(galaxy);
+            animateGalaxy();
+        }
+
+        createGalaxy();
+
+        // Tooltip for social icons
+        const socialIcons = document.querySelectorAll('.social-icon');
+        const tooltips = ['Website', 'Instagram', 'Email', 'Mission Control'];
+        
+        socialIcons.forEach((icon, index) => {
+            icon.setAttribute('title', tooltips[index]);
+            
+            icon.addEventListener('click', () => {
+                const message = document.createElement('div');
+                message.style.cssText = `
+                    position: fixed;
+                    bottom: 100px;
+                    right: 30px;
+                    background: var(--accent-1);
+                    color: white;
+                    padding: 15px 30px;
+                    border-radius: 10px;
+                    font-size: 14px;
+                    z-index: 9999;
+                    animation: fadeInUp 0.3s ease-out;
+                `;
+                message.textContent = `${tooltips[index]} - Coming Soon!`;
+                document.body.appendChild(message);
+                
+                setTimeout(() => {
+                    message.style.opacity = '0';
+                    message.style.transition = 'opacity 0.3s';
+                    setTimeout(() => message.remove(), 300);
+                }, 2000);
+            });
+        });
+
+        // Console message for developers
+        console.log('%c🚀 Welcome to Celestara Space Travel! 🚀', 'font-size: 20px; color: #8a2be2; font-weight: bold;');
+        console.log('%cDeveloped for Weekend Build Marathon', 'font-size: 14px; color: #00ffff;');
+        console.log('%cPlanet Luminara awaits your journey!', 'font-size: 12px; color: #ff6ec7;');
+
+        // Add meta viewport for better mobile experience
+        if (!document.querySelector('meta[name="theme-color"]')) {
+            const meta = document.createElement('meta');
+            meta.name = 'theme-color';
+            meta.content = '#1a0033';
+            document.head.appendChild(meta);
+        }
+
+        // Final initialization
+        console.log('✨ Celestara Space Travel Website Loaded Successfully!');
+        console.log('🌟 All interactive features activated');
+        console.log('🎨 Dark/Light mode ready');
+        console.log('📱 Mobile responsive enabled');
+        console.log('🎭 Animations running smoothly');
+    </script>
+</body>
+</html>
